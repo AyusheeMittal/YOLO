@@ -6,7 +6,7 @@ from DataLoader import *
 from utils.utils import *
 from utils.torch_utils import *
 
-def test(data, lambda_y, lambda_m,
+def test(data,
          weights=None,
          batch_size=16,
          img_size=416,
@@ -76,12 +76,11 @@ def test(data, lambda_y, lambda_m,
     yolo_loss = torch.zeros(3, device=device)
     ssim_loss = torch.zeros(1, device=device)
     jdict, stats, ap, ap_class = [], [], [], []
-    for batch_i, (imgs, targets, paths, shapes, midas) in enumerate(tqdm(dataloader, desc=s)):
+    for batch_i, (imgs, targets, paths, shapes) in enumerate(tqdm(dataloader, desc=s)):
         imgs = imgs.to(device).float() / 255.0  # uint8 to float32, 0 - 255 to 0.0 - 1.0
         targets = targets.to(device)
         nb, _, height, width = imgs.shape  # batch size, channels, height, width
         whwh = torch.Tensor([width, height, width, height]).to(device)
-        midas = midas.to(device).float() / 255.0
         # Plot images with bounding boxes
         f = 'test_batch%g.png' % batch_i  # filename
         if batch_i < 1 and not os.path.exists(f):
@@ -91,15 +90,13 @@ def test(data, lambda_y, lambda_m,
         with torch.no_grad():
             # Run model
             t = time_synchronized()
-            inf_out, train_out, midas_out = model(imgs, augment=augment)  # inference and training outputs
+            inf_out, train_out = model(imgs, augment=augment)  # inference and training outputs
             t0 += time_synchronized() - t
 
             # Compute loss
             if hasattr(model, 'hyp'):  # if model has loss hyperparameters
                 yolo_loss += compute_loss(train_out, targets, model)[1][:3]  # GIoU, obj, cls
-                midas = midas.unsqueeze(1)
-                ssim_loss += 1 - ssim(midas_out, midas)
-                loss = lambda_y * yolo_loss + lambda_m * ssim_loss
+                loss = yolo_loss
 
             # Run NMS
             t = time_synchronized()
