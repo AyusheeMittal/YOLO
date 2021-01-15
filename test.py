@@ -55,7 +55,6 @@ def test(data,
     iouv = iouv[0].view(1)  # comment for mAP@0.5:0.95
     niou = iouv.numel()
     yolo_loss = 0
-    ssim_loss = 0
 
     # Dataloader
     if dataloader is None:
@@ -71,10 +70,9 @@ def test(data,
     model.eval()
     _ = model(torch.zeros((1, 3, img_size, img_size), device=device)) if device.type != 'cpu' else None  # run once
     coco91class = coco80_to_coco91_class()
-    s = ('%20s' + '%10s' * 7) % ('Class', 'Images', 'Targets', 'P', 'R', 'mAP@0.5', 'F1', 'SSIM Loss')
+    s = ('%20s' + '%10s' * 6) % ('Class', 'Images', 'Targets', 'P', 'R', 'mAP@0.5', 'F1')
     p, r, f1, mp, mr, map, mf1, t0, t1 = 0., 0., 0., 0., 0., 0., 0., 0., 0.
     yolo_loss = torch.zeros(3, device=device)
-    ssim_loss = torch.zeros(1, device=device)
     jdict, stats, ap, ap_class = [], [], [], []
     for batch_i, (imgs, targets, paths, shapes) in enumerate(tqdm(dataloader, desc=s)):
         imgs = imgs.to(device).float() / 255.0  # uint8 to float32, 0 - 255 to 0.0 - 1.0
@@ -179,8 +177,8 @@ def test(data,
         nt = torch.zeros(1)
 
     # Print results
-    pf = '%20s' + '%10.3g' * 7  # print format
-    print(pf % ('all', seen, nt.sum(), mp, mr, map, mf1, ssim_loss))
+    pf = '%20s' + '%10.3g' * 6  # print format
+    print(pf % ('all', seen, nt.sum(), mp, mr, map, mf1))
 
     # Print results per class
     if verbose and nc > 1 and len(stats):
@@ -196,7 +194,7 @@ def test(data,
     maps = np.zeros(nc) + map
     for i, c in enumerate(ap_class):
         maps[c] = ap[i]
-    return (mp, mr, map, mf1, ssim_loss, *(loss.cpu() / len(dataloader)).tolist()), maps
+    return (mp, mr, map, mf1, *(loss.cpu() / len(dataloader)).tolist()), maps
 
 
 if __name__ == '__main__':
