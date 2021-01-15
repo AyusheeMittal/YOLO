@@ -6,11 +6,10 @@ import os
 from glob import glob
 import torch
 import torch.nn
-#from Model import*
+
 from DataLoader import *
-from utils.ssim import *
-from utils.torch_utils import * #select_device, init_seeds, ModelEMA
-from utils.utils import * #labels_to_class_weights, labels_to_image_weights, compute_loss, plot_results
+from utils.torch_utils import * 
+from utils.utils import * 
 import math
 import MainModel
 import test
