@@ -1,8 +1,8 @@
 import argparse
 from sys import platform
 
-#from models import *  # set ONNX_EXPORT in models.py
-#from Model import*
+from MainModel import *  # set ONNX_EXPORT in models.py
+
 from DataLoader import *
 from utils.utils import *
 from utils.torch_utils import *
