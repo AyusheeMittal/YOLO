@@ -12,12 +12,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils.data
 from torch.autograd import Variable
-
-#from nms.nms_wrapper import nms
-#from roialign.roi_align.crop_and_resize import CropAndResizeFunction
 import cv2
-#from .utils_planar import *
-#from .config_planar import *
 
 ONNX_EXPORT = False
 
