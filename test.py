@@ -2,12 +2,10 @@ import argparse
 import json
 
 from torch.utils.data import DataLoader
-
-#from Model import *
 from DataLoader import *
 from utils.utils import *
 from utils.torch_utils import *
-from utils.ssim import *
+
 def test(data, lambda_y, lambda_m,
          weights=None,
          batch_size=16,
