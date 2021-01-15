@@ -388,7 +388,7 @@ def train():
 
         # Write epoch results
         with open(results_file, 'a') as f:
-            f.write(s + '%10.3g' * 8 % results + '\n')  # P, R, mAP, F1, test_losses=(GIoU, obj, cls)
+            f.write(s + '%10.3g' * 7 % results + '\n')  # P, R, mAP, F1, test_losses=(GIoU, obj, cls)
         if len(opt.name) and opt.bucket:
             os.system('gsutil cp results.txt gs://%s/results/results%s.txt' % (opt.bucket, opt.name))
 
